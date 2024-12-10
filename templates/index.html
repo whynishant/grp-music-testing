@@ -3,30 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Room</title>
-    <link rel="stylesheet" href="static/styles.css">
+    <title>Music Listening Room</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div id="join-container">
-        <h1>Welcome to the Music Room</h1>
-        <input type="text" id="username" placeholder="Enter your name">
-        <input type="text" id="room" placeholder="Enter room name">
-        <button id="join-room">Join Room</button>
-    </div>
-
-    <div id="music-container" style="display:none;">
-        <h2>Music Room</h2>
-        <div id="controls-container">
-            <button id="play-button">Play</button>
-            <button id="pause-button">Pause</button>
+    <div id="main-container">
+        <h1>Music Listening Room</h1>
+        <div id="join-container">
+            <input type="text" id="username" placeholder="Enter your name">
+            <input type="text" id="room" placeholder="Enter room name">
+            <button id="join-room">Join Room</button>
         </div>
-        <iframe id="spotify-player" width="300" height="352"
-                src="https://open.spotify.com/embed/playlist/00IvCvQNm1guhv19gSc5ef" frameborder="0" allow="encrypted-media">
-        </iframe>
-        <ul id="messages"></ul>
+
+        <div id="music-container" style="display: none;">
+            <h2>You're in the room: <span id="room-name"></span></h2>
+            <iframe
+                id="spotify-player"
+                title="Spotify Playlist"
+                src="https://open.spotify.com/embed/playlist/00lX7p6h37rsZV2RXiAS6s?utm_source=generator&theme=0"
+                width="100%"
+                height="360"
+                frameBorder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+            </iframe>
+
+            <div>
+                <button id="play-btn">Play</button>
+                <button id="pause-btn">Pause</button>
+                <button id="skip-btn">Skip</button>
+            </div>
+        </div>
     </div>
 
-    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
-    <script src="static/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
