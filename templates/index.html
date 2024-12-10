@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Room</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div id="join-container">
+        <h1>Welcome to the Music Room</h1>
+        <input type="text" id="username" placeholder="Enter your name">
+        <input type="text" id="room" placeholder="Enter room name">
+        <button id="join-room">Join Room</button>
+    </div>
+
+    <div id="music-container" style="display:none;">
+        <h2>Music Room</h2>
+        <div id="controls-container">
+            <button id="play-button">Play</button>
+            <button id="pause-button">Pause</button>
+        </div>
+        <iframe id="spotify-player" width="300" height="352"
+                src="https://open.spotify.com/embed/playlist/00IvCvQNm1guhv19gSc5ef" frameborder="0" allow="encrypted-media">
+        </iframe>
+        <ul id="messages"></ul>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <script src="static/script.js"></script>
+</body>
+</html>
