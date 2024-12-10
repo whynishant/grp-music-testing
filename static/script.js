@@ -1,9 +1,6 @@
 const socket = io(); // Connect to the server using Socket.IO
 
-let currentRoom = ''; // Store the current room
-let playerState = 'paused'; // Track current state of the music (play or pause)
-
-// Emit the 'join' event when a user joins a room
+// Join the room when the user clicks the button
 document.getElementById('join-room').addEventListener('click', () => {
     const username = document.getElementById('username').value;
     const room = document.getElementById('room').value;
@@ -12,49 +9,58 @@ document.getElementById('join-room').addEventListener('click', () => {
         // Emit a 'join' event to the server
         socket.emit('join', { username, room });
 
-        currentRoom = room; // Store the current room
-
         // Show the playlist after joining
-        document.getElementById('join-container').style.display = 'none';
+        document.getElementById('room-container').style.display = 'none';
         document.getElementById('music-container').style.display = 'block';
+
+        // Send an initial state of the music player to the server
+        socket.emit('sync-player', { action: 'play', song: 'initialSong' }); // Play or pause action, and current song.
     } else {
         alert('Please enter both a username and a room.');
     }
 });
 
-// Listen for state changes (play, pause) from other users
-socket.on('player-state-change', (data) => {
-    if (data.room === currentRoom) {
-        if (data.action === 'play') {
-            document.getElementById('spotify-player').contentWindow.postMessage('{"method":"play"}', '*');
-            playerState = 'playing';
-        } else if (data.action === 'pause') {
-            document.getElementById('spotify-player').contentWindow.postMessage('{"method":"pause"}', '*');
-            playerState = 'paused';
-        }
+// Listen for the 'sync-player' event from the server
+socket.on('sync-player', (data) => {
+    const action = data.action;
+    const song = data.song;
+
+    if (action === 'play') {
+        playMusic(song); // Function to play music (You can call the play() method of the iframe)
+    } else if (action === 'pause') {
+        pauseMusic(); // Function to pause music
+    } else if (action === 'skip') {
+        skipSong(); // Skip current song
     }
 });
 
-// Function to emit play/pause action to the server
-function syncPlayerState(action) {
-    socket.emit('player-state-change', {
-        action,
-        room: currentRoom,
-    });
+// Function to play the song
+function playMusic(song) {
+    const spotifyIframe = document.getElementById('spotify-player');
+    spotifyIframe.contentWindow.postMessage({ type: 'play' }, '*');
 }
 
-// Play button listener
-document.getElementById('play-button').addEventListener('click', () => {
-    if (playerState === 'paused') {
-        syncPlayerState('play');
-        playerState = 'playing';
-    }
+// Function to pause the song
+function pauseMusic() {
+    const spotifyIframe = document.getElementById('spotify-player');
+    spotifyIframe.contentWindow.postMessage({ type: 'pause' }, '*');
+}
+
+// Function to skip the current song
+function skipSong() {
+    const spotifyIframe = document.getElementById('spotify-player');
+    spotifyIframe.contentWindow.postMessage({ type: 'skip' }, '*');
+}
+
+// Listen for play, pause, and skip actions from the music player UI
+document.getElementById('play-btn').addEventListener('click', () => {
+    socket.emit('sync-player', { action: 'play', song: 'currentSong' });
 });
 
-// Pause button listener
-document.getElementById('pause-button').addEventListener('click', () => {
-    if (playerState === 'playing') {
-        syncPlayerState('pause');
-        playerState = 'paused';
-    }
+document.getElementById('pause-btn').addEventListener('click', () => {
+    socket.emit('sync-player', { action: 'pause' });
+});
+
+document.getElementById('skip-btn').addEventListener('click', () => {
+    socket.emit('sync-player', { action: 'skip' });
 });
